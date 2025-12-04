@@ -1,0 +1,30 @@
+{
+  "name": "b6a2",
+  "version": "1.0.0",
+  "description": "A backend API for a vehicle rental management system that handles:\r - **Vehicles** - Manage vehicle inventory with availability tracking\r - **Customers** - Manage customer accounts and profiles\r - **Bookings** - Handle vehicle rentals, returns and cost calculation\r - **Authentication** - Secure role-based access control (Admin and Customer roles)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npx tsx watch ./src/server.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AsadFahimTEC/B6A2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AsadFahimTEC/B6A2/issues"
+  },
+  "homepage": "https://github.com/AsadFahimTEC/B6A2#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.10.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
