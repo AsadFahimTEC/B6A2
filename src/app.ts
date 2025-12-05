@@ -3,6 +3,7 @@ import express, { Request, Response } from 'express';
 import { userRoutes } from './modules/users/users.routes';
 import { authRoutes } from './modules/auth/auth.routes';
 import { initDB } from './config/db';
+import { vehicleRoutes } from './modules/vehicles/vehicles.routes';
 
 
 const app = express();
@@ -19,10 +20,8 @@ app.get('/', (req: Request, res: Response) => {
     res.send('Hello Next Level Developers!')
 })
 
-
-
 // vehicles CRUD
-// app.use("/todos", todoRoutes);
+app.use("/api/v1/vehicles", vehicleRoutes);
 
 // bookings crud
 // app.use("/bookings", bookingRoutes)
