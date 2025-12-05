@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import config from "./config";
 import initDB from "./config/db";
+import { userRoutes } from './modules/users/users.routes';
 
 const app = express();
 const port = config.port;
@@ -18,7 +19,7 @@ app.get('/', (req: Request, res: Response) => {
 })
 
 // users CRUD
-// app.use("/users", userRoutes);
+app.use("/users", userRoutes);
 
 // vehicles CRUD
 // app.use("/todos", todoRoutes);
