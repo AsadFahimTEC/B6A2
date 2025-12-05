@@ -1,25 +1,25 @@
 import express, { Request, Response } from 'express';
-import config from "./config";
-import initDB from "./config/db";
+
 import { userRoutes } from './modules/users/users.routes';
+import { authRoutes } from './modules/auth/auth.routes';
+import { initDB } from './config/db';
+
 
 const app = express();
-const port = config.port;
+app.use(express.json());
 
 // initializing DB
 initDB();
 
-// parser
-app.use(express.json());
-// app.use(express.urlencoded()); // for form data
+// users CRUD
+app.use("/api/v1/users", userRoutes);
 
 // "/" -> localhost:5000/
 app.get('/', (req: Request, res: Response) => {
     res.send('Hello Next Level Developers!')
 })
 
-// users CRUD
-app.use("/users", userRoutes);
+
 
 // vehicles CRUD
 // app.use("/todos", todoRoutes);
@@ -28,7 +28,7 @@ app.use("/users", userRoutes);
 // app.use("/bookings", bookingRoutes)
 
 // authentication
-// app.use("/auth", authRoutes);
+app.use("/api/v1/auth", authRoutes);
 
 
 app.use((req, res) => {
