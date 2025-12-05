@@ -4,6 +4,7 @@ import { userRoutes } from './modules/users/users.routes';
 import { authRoutes } from './modules/auth/auth.routes';
 import { initDB } from './config/db';
 import { vehicleRoutes } from './modules/vehicles/vehicles.routes';
+import { bookingRoutes } from './modules/bookings/bookings.routes';
 
 
 const app = express();
@@ -24,7 +25,7 @@ app.get('/', (req: Request, res: Response) => {
 app.use("/api/v1/vehicles", vehicleRoutes);
 
 // bookings crud
-// app.use("/bookings", bookingRoutes)
+app.use("/api/v1/bookings", bookingRoutes)
 
 // authentication
 app.use("/api/v1/auth", authRoutes);
