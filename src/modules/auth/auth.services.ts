@@ -23,6 +23,8 @@ const loginUser = async (email: string, password: string) => {
     console.log({ token });
 
     delete user.password;
+    delete user.created_at;
+    delete user.updated_at;
 
     return { token, user };
 }

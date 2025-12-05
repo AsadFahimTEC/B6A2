@@ -29,6 +29,8 @@ const signUpUser = async (req: Request, res: Response) => {
         const result = await authServices.signUpUser(req.body);
         const user = result.rows[0];
         delete user.password;
+        delete user.created_at;
+        delete user.updated_at;
         // console.log(result.rows[0]);
         res.status(201).json({
             success: true,
