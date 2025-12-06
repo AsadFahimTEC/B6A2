@@ -16,7 +16,10 @@ const auth = (...roles: string[]) => {
 
             const finalToken = authToken.split(" ")[1] as string;
 
-            const decoded = jwt.verify(finalToken, config.jwtSecret as string) as JwtPayload;
+            const decoded = jwt.verify(finalToken, config.jwtSecret as string) as JwtPayload & {
+                id: number;
+                role: string;
+            };
 
             console.log({ decoded });
 
