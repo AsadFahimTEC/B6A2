@@ -39,7 +39,7 @@ A backend API for a vehicle rental management system that handles:
 
 ## 📁 Setup & Usage Instructions
 
-> - at first create package.json file using command npm init -y
+- at first create package.json file using command npm init -y
 - we can install express.js web framework from their official documentation using npm i express --save command
 - now typescript tsconfig.json file created using npm i -D tsx command
 - now use "dev" : "npx tsx watch ./src/server.ts" in package.json for current changed watching on that
