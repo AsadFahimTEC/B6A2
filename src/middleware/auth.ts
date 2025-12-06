@@ -11,7 +11,7 @@ const auth = (...roles: string[]) => {
             // console.log({ authToken: token });
 
             if (!authToken || !authToken.startsWith("Bearer ")) {
-                return res.status(500).json({ message: "You are not allowed!!" });
+                return res.status(401).json({ message: "You are not allowed!!" });
             }
 
             const finalToken = authToken.split(" ")[1] as string;
@@ -27,14 +27,14 @@ const auth = (...roles: string[]) => {
 
             // ["admin"]
             if (roles.length && !roles.includes(decoded.role as string)) {
-                return res.status(500).json({
+                return res.status(401).json({
                     error: "unauthorized!!",
                 })
             }
 
             next();
         } catch (err: any) {
-            res.status(500).json({
+            res.status(403).json({
                 success: false,
                 message: err.message,
             });
