@@ -1,8 +1,8 @@
 import { pool } from "../../config/db";
 
-const createBookings = async (customer_id: number, vehicle_id: number, start: string, end: string) => {
-    const vehicle = await pool.query(`SELECT daily_rent_price from vehicles WHERE id=$1 AND availability_status='available'`,
-        [vehicle_id]
+const createBookings = async (customerId: number, vehicleId: number, start: string, end: string) => {
+    const vehicle = await pool.query(`SELECT vehicle_name, daily_rent_price from vehicles WHERE id=$1 AND availability_status='available'`,
+        [vehicleId]
     );
 
     if(vehicle.rows.length === 0){
@@ -10,22 +10,22 @@ const createBookings = async (customer_id: number, vehicle_id: number, start: st
     }
 
     const price = Number(vehicle.rows[0].daily_rent_price);
-    const days = (new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60 *60 * 24);
+    const days = Math.ceil(new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60 *60 * 24);
 
-    if(days<=0) throw new Error("Invalid rent period");
+    if(days <= 0) throw new Error("Invalid rent period");
 
     const totalPrice = days * price;
 
     const booking = await pool.query(`INSERT into bookings (customer_id, vehicle_id, rent_start_date, rent_end_date, total_price, status) 
-        VALUES($1, $2, $3, $4, $5, 'active') RETURNING *`,
-        [customer_id, vehicle_id, start, end, totalPrice]
+        VALUES($1, $2, $3, $4, $5, 'active') RETURNING id, customer_id, vehicle_id, rent_start_date, rent_end_date, total_price, status `,
+        [customerId, vehicleId, start, end, totalPrice]
     );
 
     await pool.query(`UPDATE vehicles SET availability_status='booked' WHERE id=$1 `,
-        [vehicle_id]
+        [vehicleId]
     )
-    const result = booking.rows[0];
-    return result;
+
+    return booking.rows[0];
 
 }
 

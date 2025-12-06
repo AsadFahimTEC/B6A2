@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.post("/", auth("admin", "customer"), bookingControllers.createBookings);
 
-router.get("/",auth("admin", "customer"), bookingControllers.getBookings);
+router.get("/", auth("admin", "customer"), bookingControllers.getBookings);
 
 router.put("/:bookingId", auth("admin", "customer"), bookingControllers.updateBookings);
 

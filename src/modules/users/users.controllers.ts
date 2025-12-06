@@ -6,10 +6,15 @@ const createUser = async (req: Request, res: Response) => {
     try {
         const result = await userServices.createUser(req.body);
         // console.log(result.rows[0]);
+        const user = result.rows[0];
+        delete user.password;
+        delete user.created_at;
+        delete user.updated_at;
+
         res.status(201).json({
             success: true,
             message: "User Created Successfully",
-            data: result.rows[0],
+            data: user,
         });
 
 

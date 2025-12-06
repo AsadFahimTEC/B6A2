@@ -3,13 +3,14 @@ import { bookingServices } from "./bookings.services";
 
 
 
+
 const createBookings = async (req: Request, res: Response) => {
     // console.log(req.body);
     const {customer_id, vehicle_id, rent_start_date, rent_end_date} = req.body;
     try {
         const result = await bookingServices.createBookings(customer_id, vehicle_id, rent_start_date, rent_end_date);
         // console.log(result.rows[0]);
-        const booking = result.rows[0];
+        const booking = result;
         delete booking.created_at;
         delete booking.updated_at;
 

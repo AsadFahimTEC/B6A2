@@ -118,20 +118,23 @@ const deleteVehicles = async (req: Request, res: Response) => {
     // console.log(req.params.id);
     try {
         const result = await vehicleServices.deleteVehicles(req.params.vehicleId as string);
-        const user = result.rows[0];
-        delete user.created_at;
-        delete user.updated_at;
+
+        const vehicle = result.rows[0];
+        delete vehicle.created_at;
+        delete vehicle.updated_at;
 
         if (result.rowCount === 0) {
             res.status(404).json({
                 success: false,
                 message: "Vehicle not found",
             });
-        } else {
+        }
+        
+        else {
             res.status(200).json({
                 success: true,
                 message: "Vehicle deleted successfully",
-                data: user,
+                data: vehicle,
             });
         }
 
