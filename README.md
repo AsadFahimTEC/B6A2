@@ -1,65 +1,14 @@
-# 🚗 Vehicle Rental System
+# 🚗 Project Name: Vehicle Rental System
 
-## 🎯 Project Overview
+## 🎯 Live Website Link: https://vehiclerentalsystems.vercel.app/
+
+📚 Additional Features
 
 A backend API for a vehicle rental management system that handles:
 - **Vehicles** - Manage vehicle inventory with availability tracking
 - **Customers** - Manage customer accounts and profiles
 - **Bookings** - Handle vehicle rentals, returns and cost calculation
 - **Authentication** - Secure role-based access control (Admin and Customer roles)
-
----
-
-## 🛠️ Technology Stack
-
-- **Node.js** + **TypeScript**
-- **Express.js** (web framework)
-- **PostgreSQL** (database)
-- **bcrypt** (password hashing)
-- **jsonwebtoken** (JWT authentication)
-
----
-
-## 📁 Code Structure
-
-> **IMPORTANT:** Your implementation **MUST** follow a **modular pattern** with clear separation of concerns. Organize your code into feature-based modules (e.g., auth, users, vehicles, bookings) with proper layering (routes, controllers, services).
-
----
-
-## 📊 Database Tables
-
-### Users
-| Field | Notes |
-|-------|-------|
-| id | Auto-generated |
-| name | Required |
-| email | Required, unique, lowercase |
-| password | Required, min 6 characters |
-| phone | Required |
-| role | 'admin' or 'customer' |
-
-### Vehicles
-| Field | Notes |
-|-------|-------|
-| id | Auto-generated |
-| vehicle_name | Required |
-| type | 'car', 'bike', 'van' or 'SUV' |
-| registration_number | Required, unique |
-| daily_rent_price | Required, positive |
-| availability_status | 'available' or 'booked' |
-
-### Bookings
-| Field | Notes |
-|-------|-------|
-| id | Auto-generated |
-| customer_id | Links to Users table |
-| vehicle_id | Links to Vehicles table |
-| rent_start_date | Required |
-| rent_end_date | Required, must be after start date |
-| total_price | Required, positive |
-| status | 'active', 'cancelled' or 'returned' |
-
----
 
 ## 🔐 Authentication & Authorization
 
@@ -76,53 +25,36 @@ A backend API for a vehicle rental management system that handles:
 
 ---
 
-## 🌐 API Endpoints
+---
 
-> 📖 **For detailed request/response specifications, see the [API Reference](API_REFERENCE.md)**
+## 🛠️ Technology Stack
 
-> ⚠️ **IMPORTANT:** All API endpoint implementations **MUST** exactly match the specifications defined in **[API Reference](API_REFERENCE.md)**. This includes:
-> - Exact URL patterns (e.g., `/api/v1/vehicles/:vehicleId`)
-> - Request body structure and field names
-> - Response format and data structure
-
-### Authentication
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| POST | `/api/v1/auth/signup` | Public | Register new user account |
-| POST | `/api/v1/auth/signin` | Public | Login and receive JWT token |
+- **Node.js** + **TypeScript**
+- **Express.js** (web framework)
+- **PostgreSQL** (database)
+- **bcrypt** (password hashing)
+- **jsonwebtoken** (JWT authentication)
 
 ---
 
-### Vehicles
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| POST | `/api/v1/vehicles` | Admin only | Add new vehicle with name, type, registration, daily rent price and availability status |
-| GET | `/api/v1/vehicles` | Public | View all vehicles in the system |
-| GET | `/api/v1/vehicles/:vehicleId` | Public | View specific vehicle details |
-| PUT | `/api/v1/vehicles/:vehicleId` | Admin only | Update vehicle details, daily rent price or availability status |
-| DELETE | `/api/v1/vehicles/:vehicleId` | Admin only | Delete vehicle (only if no active bookings exist) |
+## 📁 Setup & Usage Instructions
+
+> - at first create package.json file using command npm init -y
+- we can install express.js web framework from their official documentation using npm i express --save command
+- now typescript tsconfig.json file created using npm i -D tsx command
+- now use "dev" : "npx tsx watch ./src/server.ts" in package.json for current changed watching on that
+- now we can create server.ts file and use basic express code from their website for basic server setup
+- now we can use npm run dev command for running our server locally
+- after that we can follow a modular pattern as create 4 folders in src to modules folder as auth, bookings, users & vehicles
+- here auth folder can be use for authentication of admin and customers with 3 files name as auth.routes.ts, auth.controllers.ts & auth.services.ts
+- here first file will be use for route definition, second will be use for user request and server response and third use for controlled business logic
+- same work for bookings, users and vehicles files also
+- app.ts file use for app routes setup
+- server.ts file use for server setup
+- .env file add for database connection string, jwt secret and port as make safety for our app
+- .gitignore file add for ignoring the node_modules in github
+- here middleware folder will be in config folder where auth.ts can be use for authorization of customers and admin
+- we can use json web token JWT for out authorization also use Bearer JWT for admin and customers authentication
+- vercel.json file added for deployment of our production file to the website before it can build and deploy to vercel
 
 ---
-
-### Users
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| GET | `/api/v1/users` | Admin only | View all users in the system |
-| PUT | `/api/v1/users/:userId` | Admin or Own | Admin: Update any user's role or details<br>Customer: Update own profile only |
-| DELETE | `/api/v1/users/:userId` | Admin only | Delete user (only if no active bookings exist) |
-
----
-
-### Bookings
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| POST | `/api/v1/bookings` | Customer or Admin | Create booking with start/end dates<br>• Validates vehicle availability<br>• Calculates total price (daily rate × duration)<br>• Updates vehicle status to "booked" |
-| GET | `/api/v1/bookings` | Role-based | Admin: View all bookings<br>Customer: View own bookings only |
-| PUT | `/api/v1/bookings/:bookingId` | Role-based | Customer: Cancel booking (before start date only)<br>Admin: Mark as "returned" (updates vehicle to "available")<br>System: Auto-mark as "returned" when period ends |
-
----
-
-## 📚 Additional Resources
-
-- **[API Reference](API_REFERENCE.md)** - Detailed endpoint documentation with request/response examples
-- **[Submission Guide](SUBMISSION_GUIDE.md)** - Assignment submission requirements and deadlines
