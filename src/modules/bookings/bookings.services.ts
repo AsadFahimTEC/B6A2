@@ -5,14 +5,16 @@ const createBookings = async (customerId: number, vehicleId: number, start: stri
         [vehicleId]
     );
 
-    if(vehicle.rows.length === 0){
+    if (vehicle.rows.length === 0) {
         throw new Error("Vehicle not available");
     }
 
-    const price = Number(vehicle.rows[0].daily_rent_price);
-    const days = Math.ceil(new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60 *60 * 24);
+    const { vehicle_name, daily_rent_price } = vehicle.rows[0];
 
-    if(days <= 0) throw new Error("Invalid rent period");
+    const price = Number(vehicle.rows[0].daily_rent_price);
+    const days = Math.ceil(new Date(end).getTime() - new Date(start).getTime()) / (1000 * 60 * 60 * 24);
+
+    if (days <= 0) throw new Error("Invalid rent period");
 
     const totalPrice = days * price;
 
@@ -25,9 +27,15 @@ const createBookings = async (customerId: number, vehicleId: number, start: stri
         [vehicleId]
     )
 
-    return booking.rows[0];
+    return {
+        ...booking.rows[0],
+        vehicle: {
+            vehicle_name,
+            daily_rent_price: Number(daily_rent_price)
+        }
+    };
 
-}
+};
 
 const getBookings = async () => {
     const result = await pool.query(`SELECT * FROM bookings`);
