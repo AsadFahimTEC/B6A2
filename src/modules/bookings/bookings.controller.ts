@@ -31,19 +31,15 @@ const createBookings = async (req: Request, res: Response) => {
 
 const getBookings = async (req: Request, res: Response) => {
     try {
-        const result = await bookingServices.getBookings();
+        const role = req.user!.role;
+        const userId = req.user!.id;
 
-        const user = result.rows.map((user: any) => {
-            //  delete user.password;
-            delete user.created_at;
-            delete user.updated_at;
-            return user;
-        });
-
+        const result = await bookingServices.getBookings(role, userId);
+         
         res.status(200).json({
             success: true,
-            message: "Vehicles retrieved successfully",
-            data: user,
+            message: role=== "admin" ? "Bookings retrieved successfully": "Your bookings retrieved successfully",
+            data: result,
         });
     } catch (err: any) {
         res.status(500).json({
@@ -58,53 +54,20 @@ const getBookings = async (req: Request, res: Response) => {
 
 const updateBookings = async (req: Request, res: Response) => {
     // console.log(req.params.id);
-    const { vehicle_name, type } = req.body;
+    const { status } = req.body;
+    const bookingId = req.params.bookingId as string;
     try {
-        const result = await bookingServices.updateBookings(vehicle_name, type, req.params.vehicleId as string);
-        const vehicle = result.rows[0];
-        delete vehicle.created_at;
-        delete vehicle.updated_at;
+        const result = await bookingServices.updateBookings(bookingId, status);
+        // const vehicle = result.rows[0];
+        // delete vehicle.created_at;
+        // delete vehicle.updated_at;
 
         if (result.rows.length === 0) {
             res.status(404).json({
                 success: false,
-                message: "Vehicle not found",
-            });
-        } else {
-            res.status(200).json({
-                success: true,
-                message: "Vehicle updated successfully",
-                data: vehicle,
-            });
-        }
-
-    } catch (err: any) {
-        res.status(500).json({
-            success: false,
-            message: err.message,
-            details: err,
-        });
-    }
-}
-
-const deleteBookings = async (req: Request, res: Response) => {
-    // console.log(req.params.id);
-    try {
-        const result = await bookingServices.deleteBookings(req.params.vehicleId as string);
-        const user = result.rows[0];
-        delete user.created_at;
-        delete user.updated_at;
-
-        if (result.rowCount === 0) {
-            res.status(404).json({
-                success: false,
-                message: "Vehicle not found",
-            });
-        } else {
-            res.status(200).json({
-                success: true,
-                message: "Vehicle deleted successfully",
-                data: user,
+                
+                message: status === "cancelled" ? "Booking cancelled successfully": "Booking marked as returned",
+                data: result
             });
         }
 
@@ -122,5 +85,4 @@ export const bookingControllers = {
     createBookings,
     getBookings,
     updateBookings,
-    deleteBookings ,
 }

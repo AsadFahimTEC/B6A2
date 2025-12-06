@@ -37,29 +37,97 @@ const createBookings = async (customerId: number, vehicleId: number, start: stri
 
 };
 
-const getBookings = async () => {
-    const result = await pool.query(`SELECT * FROM bookings`);
-    return result;
+const getBookings = async (role: string, userId?: number) => {
+    if (role === "admin") {
+        const result = await pool.query(`
+            SELECT 
+            b.id, b.customer_id, b.vehicle_id,
+            b.rent_start_date, b.rent_end_date,
+            b.total_price, b.status,
+            
+            c.name as customer_name,
+            c.email as customer_email,
+
+            v.vehicle_name,
+            v.registration_number
+
+            FROM bookings b
+            JOIN users c ON b.customer_id = c.id
+            JOIN vehicles v ON b.vehicle_id = v.id
+            ORDER BY b.id ASC 
+            `);
+
+        return result.rows.map(row => ({
+            id: row.id,
+            customer_id: row.customer_id,
+            vehicle_id: row.vehicle_id,
+            rent_start_date: row.rent_start_date,
+            rent_end_date: row.rent_end_date,
+            total_price: row.total_price,
+            status: row.status,
+            customer: {
+                name: row.customer_name,
+                email: row.customer_email
+            },
+            vehicle: {
+                vehicle_name: row.vehicle_name,
+                registration_number: row.registration_number
+            }
+        }));
+    }
+
+    const result = await pool.query(`
+            SELECT 
+            b.id, b.vehicle_id,
+            b.rent_start_date, b.rent_end_date,
+            b.total_price, b.status,
+            
+            v.vehicle_name,
+            v.registration_number,
+            v.type
+
+            FROM bookings b
+            JOIN vehicles v ON b.vehicle_id = v.id
+            WHERE b.customer_id = $1
+            ORDER BY b.id ASC 
+            `, [userId]);
+
+    return result.rows.map(row => ({
+        id: row.id,
+        customer_id: row.customer_id,
+        vehicle_id: row.vehicle_id,
+        rent_start_date: row.rent_start_date,
+        rent_end_date: row.rent_end_date,
+        total_price: row.total_price,
+        status: row.status,
+        vehicle: {
+            vehicle_name: row.vehicle_name,
+            registration_number: row.registration_number,
+            type: row.type
+        }
+    }));
 }
 
 
-const updateBookings = async (vehicle_name: string, type: string, id: string) => {
-    const result = await pool.query(`UPDATE bookings SET vehicle_name=$1, type=$2 WHERE id=$3 RETURNING *`, [vehicle_name, type, id]
+
+const updateBookings = async (bookingId: string, status: string) => {
+    const result = await pool.query(`UPDATE bookings SET status=$1 WHERE id=$2 RETURNING *`, [status, bookingId]
     );
 
-    return result;
+    if (result.rowCount === 0) throw new Error("Booking not found");
+
+    const booking = result.rows[0];
+
+    if (status === "returned") {
+        await pool.query(`UPDATE vehicles SET availability_status='available' WHERE id=$1`, [booking.vehicle_id]
+        );
+    }
+
+    return booking;
 }
-
-const deleteBookings = async (id: string) => {
-    const result = await pool.query(`DELETE FROM bookings WHERE id = $1`, [id]);
-    return result;
-}
-
-
 
 export const bookingServices = {
     createBookings,
     getBookings,
     updateBookings,
-    deleteBookings,
 }
