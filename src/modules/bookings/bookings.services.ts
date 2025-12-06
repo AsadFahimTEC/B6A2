@@ -110,20 +110,41 @@ const getBookings = async (role: string, userId?: number) => {
 
 
 
-const updateBookings = async (bookingId: string, status: string) => {
+const updateBookings = async (bookingId: string, status: string, role: string, userId?: number) => {
+    if (role === "customer" && status !== "cancelled") {
+        throw new Error("Customers can only cancel bookings.");
+    }
+
+    let bookingQuery = `SELECT * FROM bookings WHERE id=$1`;
+
+    const bookingCheck = await pool.query(bookingQuery, [bookingId]);
+
+    if (bookingCheck.rowCount === 0) throw new Error("Booking not found");
+
+    const booking = bookingCheck.rows[0];
+
+    if (role === "customer" && booking.customer_id !== userId) {
+        throw new Error("You can update your own bookings.");
+    }
+
     const result = await pool.query(`UPDATE bookings SET status=$1 WHERE id=$2 RETURNING *`, [status, bookingId]
     );
 
-    if (result.rowCount === 0) throw new Error("Booking not found");
+    const updateBooking = result.rows[0];
 
-    const booking = result.rows[0];
+    let vehicleStatus = null;
 
-    if (status === "returned") {
-        await pool.query(`UPDATE vehicles SET availability_status='available' WHERE id=$1`, [booking.vehicle_id]
+    if (status === "returned" && role === "admin") {
+        await pool.query(`UPDATE vehicles SET availability_status='available' WHERE id=$1`, [updateBooking.vehicle_id]
         );
+
+        vehicleStatus = { availability_status: 'available' };
     }
 
-    return booking;
+    return {
+        booking: updateBooking,
+        vehicle: vehicleStatus
+    }
 }
 
 export const bookingServices = {
